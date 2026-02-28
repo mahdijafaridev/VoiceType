@@ -19,15 +19,9 @@ No switching apps. No copy-pasting. No repeating yourself. Just speak and keep m
 ## 📦 Install
 
 ### Direct download
-[⬇️ Download VoiceType.dmg](https://github.com/mahdijafaridev/VoiceType/VoiceType.dmg)
+[⬇️ Download VoiceType.dmg](https://github.com/mahdijafaridev/VoiceType/blob/main/VoiceType.dmg)
 
-Unzip and move `VoiceType.app` to your Applications folder.
-
-### Homebrew
-```bash
-brew tap yourname/voicetype
-brew install --cask voicetype
-```
+Open the dmg and drag `VoiceType.app` to your Applications folder.
 
 ---
 
