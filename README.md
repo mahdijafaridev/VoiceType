@@ -1,129 +1,100 @@
 # VoiceType
 
-VoiceType is a macOS menu bar app that turns speech into text while you hold **Right Command**.
-When you release the key, VoiceType transcribes your speech on-device and inserts the text into the active field.
+VoiceType is a Mac menu bar app that lets you talk instead of type.
+
+Hold **Right Command** to record your voice. Release it, and your words are inserted into the text box you are using.
 
 ![VoiceType demo](./assets/voicetype-demo.gif)
 
-## Who This Is For
+## What VoiceType Does
 
-VoiceType is for people who want fast dictation anywhere they can type on macOS, without sending audio to a cloud service.
+- Lives in your menu bar
+- Records while you hold **Right Command**
+- Turns speech into text
+- Inserts text into the app you are currently typing in
+- Uses clipboard paste as backup when direct insert is not possible
 
-## What You Get
+## Before You Start
 
-- Menu bar app (no Dock clutter)
-- Press-and-hold recording with **Right Command**
-- On-device transcription using Apple Speech
-- Floating recording overlay with live waveform feedback
-- Direct text insertion into focused inputs
-- Clipboard fallback when direct insertion is unavailable
-- Simple menu with:
-  - `Hide Menu Bar`
-  - `Launch at Login`
+VoiceType needs these permissions:
 
-## Requirements
+- **Microphone**
+- **Speech Recognition**
+- **Accessibility**
 
-- macOS 13 or newer
-- Xcode 15 or newer (for building/running from source)
-- Microphone, Speech Recognition, and Accessibility permissions
+Without these, it will not work correctly.
 
-## Quick Start (2-3 minutes)
+## Install
 
-1. Open `VoiceType.xcodeproj` in Xcode.
-2. Select the **VoiceType** scheme.
-3. Press **Run** (`Cmd + R`).
-4. Approve permission prompts when asked.
-5. Click into any text field (Notes, Mail, browser, etc.).
-6. Hold **Right Command** and speak.
-7. Release **Right Command** to transcribe and insert text.
+1. Open VoiceType.
+2. If macOS asks for permissions, click **Allow**.
+3. If you do not see prompts, follow the permission steps below.
 
-## First-Run Permissions (Important)
-
-VoiceType needs three permissions to work fully:
-
-- **Microphone**: captures your voice
-- **Speech Recognition**: performs transcription
-- **Accessibility**: inserts text into other apps
-
-If any permission is denied:
+## Set Permissions Manually (If Needed)
 
 1. Open **System Settings**.
 2. Go to **Privacy & Security**.
-3. Enable permissions for `VoiceType` under:
-   - Microphone
-   - Speech Recognition
-   - Accessibility
-4. Quit and relaunch VoiceType.
+3. Turn on VoiceType in:
+   - **Microphone**
+   - **Speech Recognition**
+   - **Accessibility**
+4. Quit and reopen VoiceType.
 
-## Daily Use
+## How To Use
 
-1. Focus a text field.
-2. Hold **Right Command** to record.
-3. Speak naturally.
-4. Release **Right Command**.
-5. Text is inserted automatically.
+1. Click inside any text field (Notes, Mail, browser, chat apps, etc.).
+2. Hold **Right Command** and speak.
+3. Release **Right Command**.
+4. Your text appears where the cursor is.
 
-If direct insertion fails, VoiceType copies text to clipboard so you can paste manually with `Cmd + V`.
+If direct insertion is blocked by an app, VoiceType copies the text so you can paste with `Cmd + V`.
 
-## Tips for Better Results
+## Tips for Better Dictation
 
 - Speak clearly at a normal pace.
-- Reduce background noise.
-- Keep microphone input volume healthy (not clipping).
-- Pause briefly before releasing **Right Command**.
-- Confirm your macOS dictation language matches your speech language.
+- Use a quiet room when possible.
+- Keep your microphone close enough to your voice.
+- Wait a brief moment after speaking, then release **Right Command**.
 
 ## Troubleshooting
 
-### Nothing happens when pressing Right Command
+### Nothing happens when I hold Right Command
 
-- Confirm VoiceType is running in the menu bar.
-- Re-check Accessibility permission.
-- Try quitting and relaunching VoiceType.
+- Make sure VoiceType is running (menu bar icon visible).
+- Re-check **Accessibility** permission.
+- Quit and reopen VoiceType.
 
-### Transcription fails or returns empty text
+### It hears me but no text appears
 
-- Confirm Microphone + Speech Recognition permissions.
-- Enable Dictation in:
-  `System Settings > Keyboard > Dictation`
-- Test microphone input in another app.
+- Re-check **Microphone** and **Speech Recognition** permissions.
+- Make sure you clicked into a text field first.
+- Try another app (for example, Notes) to test.
 
-### Text does not appear in target app
+### It does not type into one specific app
 
-- Make sure a writable text field is focused.
-- Some secure fields or custom controls block direct insertion.
-- Use clipboard fallback (`Cmd + V`) when needed.
+Some apps or secure input fields block direct text insertion.
+Use the copied text and paste manually with `Cmd + V`.
+
+### Speech recognition is failing
+
+Turn on Dictation in:
+`System Settings > Keyboard > Dictation`
 
 ## Privacy
 
-- Transcription is performed on-device via Apple frameworks.
-- VoiceType does not include third-party analytics or SDKs.
+- VoiceType is designed to transcribe using Apple system features.
+- No third-party analytics or ad SDKs are included.
 
-## Build From Source
+## Quick FAQ
 
-1. Clone this repository.
-2. Open `VoiceType.xcodeproj`.
-3. Build and run with Xcode.
+### Do I need to keep VoiceType open?
 
-## Project Structure
-
-- `VoiceType/VoiceTypeApp.swift`: app entry and delegate wiring
-- `VoiceType/AppDelegate.swift`: permissions, key monitor, orchestration
-- `VoiceType/TranscriptionEngine.swift`: audio engine + speech pipeline
-- `VoiceType/PasteHelper.swift`: Accessibility + clipboard insertion logic
-- `VoiceType/OverlayWindow.swift`: floating overlay window
-- `VoiceType/WaveformView.swift`: live waveform visualization
-
-## FAQ
-
-### Does VoiceType require internet?
-
-VoiceType is designed for on-device transcription through Apple APIs. Availability can vary by macOS language/support settings.
+Yes. It runs from the menu bar.
 
 ### Can I change the shortcut key?
 
-Not yet. Current trigger is **Right Command**.
+Not currently. The shortcut is **Right Command**.
 
-### Can I hide it from menu bar?
+### Can I hide the menu bar icon?
 
-Yes. Use `Hide Menu Bar` in the app menu.
+Yes. Use **Hide Menu Bar** in VoiceType’s menu.
