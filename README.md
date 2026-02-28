@@ -1,76 +1,129 @@
 # VoiceType
 
-VoiceType is a macOS menu bar app that records while you hold the **Right Command** key, transcribes speech on-device, and pastes text into the focused input.
+VoiceType is a macOS menu bar app that turns speech into text while you hold **Right Command**.
+When you release the key, VoiceType transcribes your speech on-device and inserts the text into the active field.
 
-## Features
+![VoiceType demo](./assets/voicetype-demo.gif)
 
-- Menu bar utility (no Dock icon)
-- Hold **Right Command** to record, release to transcribe
-- On-device speech recognition with `SFSpeechRecognizer`
-- Floating always-on-top recording overlay with live waveform
-- Paste into focused field via Accessibility API
-- Clipboard fallback when focused editable field is unavailable
-- First-launch permission flow for:
-  - Accessibility
-  - Microphone
-  - Speech Recognition
-- Minimal menu options:
-  - Hide Menu Bar
-  - Launch at Login (enabled by default on first run)
+## Who This Is For
+
+VoiceType is for people who want fast dictation anywhere they can type on macOS, without sending audio to a cloud service.
+
+## What You Get
+
+- Menu bar app (no Dock clutter)
+- Press-and-hold recording with **Right Command**
+- On-device transcription using Apple Speech
+- Floating recording overlay with live waveform feedback
+- Direct text insertion into focused inputs
+- Clipboard fallback when direct insertion is unavailable
+- Simple menu with:
+  - `Hide Menu Bar`
+  - `Launch at Login`
 
 ## Requirements
 
-- macOS 13+
-- Xcode 15+
-- Swift 5+
+- macOS 13 or newer
+- Xcode 15 or newer (for building/running from source)
+- Microphone, Speech Recognition, and Accessibility permissions
 
-## Setup
+## Quick Start (2-3 minutes)
 
 1. Open `VoiceType.xcodeproj` in Xcode.
-2. Select the `VoiceType` scheme.
-3. Build and run on macOS.
+2. Select the **VoiceType** scheme.
+3. Press **Run** (`Cmd + R`).
+4. Approve permission prompts when asked.
+5. Click into any text field (Notes, Mail, browser, etc.).
+6. Hold **Right Command** and speak.
+7. Release **Right Command** to transcribe and insert text.
 
-## Permissions
+## First-Run Permissions (Important)
 
-VoiceType needs system permissions to work correctly:
+VoiceType needs three permissions to work fully:
 
-- **Accessibility**: needed to paste into other apps
-- **Microphone**: needed for recording
-- **Speech Recognition**: needed for transcription
+- **Microphone**: captures your voice
+- **Speech Recognition**: performs transcription
+- **Accessibility**: inserts text into other apps
 
-If transcription reports dictation-related failures, enable Dictation in:
-`System Settings > Keyboard > Dictation`.
+If any permission is denied:
 
-## Usage
+1. Open **System Settings**.
+2. Go to **Privacy & Security**.
+3. Enable permissions for `VoiceType` under:
+   - Microphone
+   - Speech Recognition
+   - Accessibility
+4. Quit and relaunch VoiceType.
 
-1. Launch VoiceType.
-2. Click into any text input in any app.
-3. Hold **Right Command** to start recording.
-4. Release **Right Command** to stop and transcribe.
-5. VoiceType pastes text into the focused field (or copies to clipboard fallback).
+## Daily Use
+
+1. Focus a text field.
+2. Hold **Right Command** to record.
+3. Speak naturally.
+4. Release **Right Command**.
+5. Text is inserted automatically.
+
+If direct insertion fails, VoiceType copies text to clipboard so you can paste manually with `Cmd + V`.
+
+## Tips for Better Results
+
+- Speak clearly at a normal pace.
+- Reduce background noise.
+- Keep microphone input volume healthy (not clipping).
+- Pause briefly before releasing **Right Command**.
+- Confirm your macOS dictation language matches your speech language.
 
 ## Troubleshooting
 
-- Shortcut not working:
-  - Confirm Accessibility is enabled for VoiceType.
-  - Relaunch app after granting permissions.
-- No transcription:
-  - Confirm Speech Recognition and Microphone permissions are granted.
-  - Check Dictation is enabled in Keyboard settings.
-- No paste into target app:
-  - Confirm target app has a focused editable field.
-  - Clipboard fallback is used when direct insertion is not possible.
+### Nothing happens when pressing Right Command
+
+- Confirm VoiceType is running in the menu bar.
+- Re-check Accessibility permission.
+- Try quitting and relaunching VoiceType.
+
+### Transcription fails or returns empty text
+
+- Confirm Microphone + Speech Recognition permissions.
+- Enable Dictation in:
+  `System Settings > Keyboard > Dictation`
+- Test microphone input in another app.
+
+### Text does not appear in target app
+
+- Make sure a writable text field is focused.
+- Some secure fields or custom controls block direct insertion.
+- Use clipboard fallback (`Cmd + V`) when needed.
+
+## Privacy
+
+- Transcription is performed on-device via Apple frameworks.
+- VoiceType does not include third-party analytics or SDKs.
+
+## Build From Source
+
+1. Clone this repository.
+2. Open `VoiceType.xcodeproj`.
+3. Build and run with Xcode.
 
 ## Project Structure
 
 - `VoiceType/VoiceTypeApp.swift`: app entry and delegate wiring
 - `VoiceType/AppDelegate.swift`: permissions, key monitor, orchestration
 - `VoiceType/TranscriptionEngine.swift`: audio engine + speech pipeline
-- `VoiceType/PasteHelper.swift`: Accessibility + clipboard paste logic
-- `VoiceType/OverlayWindow.swift`: floating panel + overlay controller
-- `VoiceType/WaveformView.swift`: waveform UI driven by audio level
+- `VoiceType/PasteHelper.swift`: Accessibility + clipboard insertion logic
+- `VoiceType/OverlayWindow.swift`: floating overlay window
+- `VoiceType/WaveformView.swift`: live waveform visualization
 
-## Notes
+## FAQ
 
-- Built as a native SwiftUI/AppKit hybrid for macOS.
-- Uses only Apple frameworks (no third-party dependencies).
+### Does VoiceType require internet?
+
+VoiceType is designed for on-device transcription through Apple APIs. Availability can vary by macOS language/support settings.
+
+### Can I change the shortcut key?
+
+Not yet. Current trigger is **Right Command**.
+
+### Can I hide it from menu bar?
+
+Yes. Use `Hide Menu Bar` in the app menu.
