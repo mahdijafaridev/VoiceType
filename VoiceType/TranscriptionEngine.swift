@@ -39,14 +39,6 @@ final class TranscriptionEngine {
             throw NSError(domain: "VoiceType", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Speech recognizer is unavailable."])
         }
 
-        guard recognizer.supportsOnDeviceRecognition else {
-            throw NSError(
-                domain: "VoiceType",
-                code: 1002,
-                userInfo: [NSLocalizedDescriptionKey: "On-device speech recognition is not available for this language/OS."]
-            )
-        }
-
         resolvePendingStopContinuationIfNeeded(
             with: NSError(
                 domain: "VoiceType",
@@ -59,7 +51,12 @@ final class TranscriptionEngine {
         recognitionError = nil
 
         let request = SFSpeechAudioBufferRecognitionRequest()
-        request.requiresOnDeviceRecognition = true
+        if recognizer.supportsOnDeviceRecognition {
+            request.requiresOnDeviceRecognition = true
+        } else {
+            request.requiresOnDeviceRecognition = false
+            print("TranscriptionEngine: on-device recognition is unavailable; falling back to non-on-device mode.")
+        }
         request.shouldReportPartialResults = true
         recognitionRequest = request
 

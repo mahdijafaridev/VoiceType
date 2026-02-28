@@ -9,7 +9,7 @@ import Foundation
 @MainActor
 final class PasteHelper {
     /**
-     Attempts direct paste into launchInitializationDelaythe focused UI element; otherwise copies to clipboard.
+     Attempts direct paste into the focused UI element; otherwise copies to clipboard.
      */
     func pasteTextOrCopy(_ text: String) {
         let sanitizedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -22,6 +22,9 @@ final class PasteHelper {
 
         guard AXIsProcessTrusted() else {
             print("PasteHelper: AX not trusted, clipboard fallback.")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.postCommandV()
+            }
             return
         }
 

@@ -224,14 +224,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var isRecording = false
     private var isShowingSpeechSettingsPrompt = false
     private var keyMonitorRecoveryTimer: Timer?
+    private var previousApp: NSRunningApplication?
+    private var workspaceActivationObserver: NSObjectProtocol?
 
     private let accessibilityPromptedKey = "didPromptAccessibility"
-    private let accessibilitySystemPromptedKey = "didPromptAccessibilitySystem"
     private let launchAtLoginConfiguredKey = "didConfigureLaunchAtLoginDefault"
     private let launchInitializationDelay: TimeInterval = 2.0
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        startTrackingPreviouslyFocusedApp()
         setupStatusItem()
         configureLaunchAtLoginDefault()
         wireLevelUpdates()
@@ -239,9 +241,46 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        stopTrackingPreviouslyFocusedApp()
         keyMonitorRecoveryTimer?.invalidate()
         keyMonitorRecoveryTimer = nil
         stopGlobalKeyMonitor()
+    }
+
+    /**
+     Tracks the last active app outside VoiceType for targeted fallback paste events.
+     */
+    private func startTrackingPreviouslyFocusedApp() {
+        if let frontmostApp = NSWorkspace.shared.frontmostApplication,
+           frontmostApp.bundleIdentifier != Bundle.main.bundleIdentifier {
+            previousApp = frontmostApp
+        }
+
+        workspaceActivationObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didActivateApplicationNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self else { return }
+            guard
+                let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                app.bundleIdentifier != Bundle.main.bundleIdentifier
+            else {
+                return
+            }
+
+            self.previousApp = app
+        }
+    }
+
+    /**
+     Removes workspace app-activation tracking observer.
+     */
+    private func stopTrackingPreviouslyFocusedApp() {
+        if let workspaceActivationObserver {
+            NSWorkspace.shared.notificationCenter.removeObserver(workspaceActivationObserver)
+            self.workspaceActivationObserver = nil
+        }
     }
 
     /**
@@ -387,7 +426,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     /**
-     Displays explanation and triggers system Accessibility consent prompt once.
+     Displays explanation and triggers system Accessibility consent prompt when needed.
      */
     private func requestAccessibilityPermissionIfNeeded() {
         let trusted = AXIsProcessTrusted()
@@ -404,11 +443,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             defaults.set(true, forKey: accessibilityPromptedKey)
         }
 
-        if !defaults.bool(forKey: accessibilitySystemPromptedKey) {
-            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-            _ = AXIsProcessTrustedWithOptions(options)
-            defaults.set(true, forKey: accessibilitySystemPromptedKey)
-        }
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        _ = AXIsProcessTrustedWithOptions(options)
     }
 
     /**
@@ -524,6 +560,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Task {
             do {
                 let text = try await transcriptionEngine.stopRecording()
+                let trusted = AXIsProcessTrusted()
+                print("AppDelegate: AXIsProcessTrusted() = \(trusted)")
+                pasteHelper.previousApp = previousApp
                 pasteHelper.pasteTextOrCopy(text)
             } catch {
                 handleSpeechError(error)
