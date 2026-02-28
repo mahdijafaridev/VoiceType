@@ -8,6 +8,8 @@ import Foundation
  */
 @MainActor
 final class PasteHelper {
+    var previousApp: NSRunningApplication?
+
     /**
      Attempts direct paste into the focused UI element; otherwise copies to clipboard.
      */
@@ -21,15 +23,14 @@ final class PasteHelper {
         writeToClipboard(sanitizedText)
 
         guard AXIsProcessTrusted() else {
-            print("PasteHelper: AX not trusted, clipboard fallback.")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                self?.postCommandV()
-            }
+            print("PasteHelper: AX not trusted, attempting Cmd+V fallback.")
+            postCommandV()
             return
         }
 
         guard let focused = focusedElement() else {
-            print("PasteHelper: no focused element, clipboard fallback.")
+            print("PasteHelper: no focused element, attempting Cmd+V fallback.")
+            postCommandV()
             return
         }
 
@@ -220,35 +221,41 @@ final class PasteHelper {
     }
 
     /**
-     Synthesizes Cmd+V to paste clipboard into the focused app.
+     Activates the previous app and synthesizes Cmd+V after it becomes frontmost.
      */
     private func postCommandV() {
-        let frontmostPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
-
-        let source = CGEventSource(stateID: .hidSystemState)
-        guard
-            let down = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: true),
-            let up = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: false)
-        else {
-            print("PasteHelper: failed to create Cmd+V events, clipboard fallback only.")
+        guard let targetApp = previousApp else {
+            print("PasteHelper: no previous app to paste into.")
             return
         }
 
-        down.flags = .maskCommand
-        up.flags = .maskCommand
+        let targetPID = targetApp.processIdentifier
+        print("PasteHelper: posting Cmd+V to \(targetApp.localizedName ?? "unknown") pid=\(targetPID)")
 
-        // Post through both HID and annotated taps for broader compatibility.
-        down.post(tap: .cghidEventTap)
-        up.post(tap: .cghidEventTap)
-        down.post(tap: .cgAnnotatedSessionEventTap)
-        up.post(tap: .cgAnnotatedSessionEventTap)
+        // Activate the target app first. Use .activateIgnoringOtherApps so it
+        // actually comes to front even if another app tried to stay active.
+        targetApp.activate(options: [.activateIgnoringOtherApps])
 
-        if let frontmostPID {
-            down.postToPid(frontmostPID)
-            up.postToPid(frontmostPID)
+        // Wait long enough for the app to actually become frontmost before
+        // firing the keystroke. 0.15s is not reliable — 0.35s is safer.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            let source = CGEventSource(stateID: .hidSystemState)
+            guard
+                let down = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: true),
+                let up = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: false)
+            else {
+                print("PasteHelper: failed to create Cmd+V events.")
+                return
+            }
+
+            down.flags = .maskCommand
+            up.flags = .maskCommand
+
+            down.postToPid(targetPID)
+            up.postToPid(targetPID)
+
+            print("PasteHelper: Cmd+V posted to pid \(targetPID).")
         }
-
-        print("PasteHelper: CGEvent Cmd+V fallback path.")
     }
 
     /**
