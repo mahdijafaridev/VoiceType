@@ -1,100 +1,77 @@
-# VoiceType
+# 🎙️ VoiceType
 
-VoiceType is a Mac menu bar app that lets you talk instead of type.
+**Stop typing. Just talk.**
 
-Hold **Right Command** to record your voice. Release it, and your words are inserted into the text box you are using.
+VoiceType turns your voice into text and pastes it wherever your cursor is — instantly. No cloud, no subscription, no waiting.
 
-![VoiceType demo](./assets/voicetype-demo.gif)
+![VoiceType Demo](demo.gif)
 
-## What VoiceType Does
+---
 
-- Lives in your menu bar
-- Records while you hold **Right Command**
-- Turns speech into text
-- Inserts text into the app you are currently typing in
-- Uses clipboard paste as backup when direct insert is not possible
+## ⚡ How fast is it?
 
-## Before You Start
+Hold a key → speak → release. Done. Your text is already there.
 
-VoiceType needs these permissions:
+No switching apps. No copy-pasting. No repeating yourself. Just speak and keep moving.
 
-- **Microphone**
-- **Speech Recognition**
-- **Accessibility**
+---
 
-Without these, it will not work correctly.
+## 🚀 How to use it
 
-## Install
+1. Click into any text field — email, browser, notes, Slack, anywhere
+2. Hold **Right Command (⌘)**
+3. Speak
+4. Release the key
+5. Your words appear instantly ✅
 
-1. Open VoiceType.
-2. If macOS asks for permissions, click **Allow**.
-3. If you do not see prompts, follow the permission steps below.
+> No focused input? No problem — the text goes straight to your clipboard. Just hit `Cmd+V`.
 
-## Set Permissions Manually (If Needed)
+---
 
-1. Open **System Settings**.
-2. Go to **Privacy & Security**.
-3. Turn on VoiceType in:
-   - **Microphone**
-   - **Speech Recognition**
-   - **Accessibility**
-4. Quit and reopen VoiceType.
+## 📋 Requirements
 
-## How To Use
+- macOS 13 (Ventura) or later
+- That's it
 
-1. Click inside any text field (Notes, Mail, browser, chat apps, etc.).
-2. Hold **Right Command** and speak.
-3. Release **Right Command**.
-4. Your text appears where the cursor is.
+---
 
-If direct insertion is blocked by an app, VoiceType copies the text so you can paste with `Cmd + V`.
+## 🔧 First-time setup
 
-## Tips for Better Dictation
+### Install
 
-- Speak clearly at a normal pace.
-- Use a quiet room when possible.
-- Keep your microphone close enough to your voice.
-- Wait a brief moment after speaking, then release **Right Command**.
+Download and open `VoiceType.app`. It lives in your menu bar — no Dock icon.
 
-## Troubleshooting
+### Give it permissions
 
-### Nothing happens when I hold Right Command
+On first launch VoiceType will ask for three things:
 
-- Make sure VoiceType is running (menu bar icon visible).
-- Re-check **Accessibility** permission.
-- Quit and reopen VoiceType.
+| Permission | Why |
+|---|---|
+| 🎤 Microphone | To hear you speak |
+| 💬 Speech Recognition | To transcribe your voice |
+| ♿ Accessibility | To paste text into other apps |
 
-### It hears me but no text appears
+If you accidentally skipped any of them, go to `System Settings → Privacy & Security` and enable VoiceType under each section.
 
-- Re-check **Microphone** and **Speech Recognition** permissions.
-- Make sure you clicked into a text field first.
-- Try another app (for example, Notes) to test.
+---
 
-### It does not type into one specific app
+## 🛠️ Troubleshooting
 
-Some apps or secure input fields block direct text insertion.
-Use the copied text and paste manually with `Cmd + V`.
+**Nothing happens when I hold Right Command**
+→ Go to `System Settings → Privacy & Security → Accessibility` and make sure VoiceType is toggled on.
 
-### Speech recognition is failing
+**Text is not pasting into the app**
+→ Accessibility permission is missing. Click the VoiceType menu bar icon → "Request Accessibility Permission".
 
-Turn on Dictation in:
-`System Settings > Keyboard > Dictation`
+**Transcription is off**
+→ Speak at a normal pace in a quiet space. Everything runs on-device on your Mac — no internet needed.
 
-## Privacy
+---
 
-- VoiceType is designed to transcribe using Apple system features.
-- No third-party analytics or ad SDKs are included.
+## 🔒 Privacy
 
-## Quick FAQ
+Your voice never leaves your Mac. VoiceType uses Apple's built-in speech engine — fully on-device, works offline.
 
-### Do I need to keep VoiceType open?
+---
 
-Yes. It runs from the menu bar.
-
-### Can I change the shortcut key?
-
-Not currently. The shortcut is **Right Command**.
-
-### Can I hide the menu bar icon?
-
-Yes. Use **Hide Menu Bar** in VoiceType’s menu.
+Built to save you time, every single day. 🕐
