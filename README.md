@@ -4,7 +4,7 @@
 
 VoiceType turns your voice into text and pastes it wherever your cursor is — instantly. No cloud, no subscription, no waiting.
 
-![VoiceType Demo](demo.gif)
+![VoiceType Demo](assets/demo.gif)
 
 ---
 
