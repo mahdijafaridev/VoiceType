@@ -16,6 +16,21 @@ No switching apps. No copy-pasting. No repeating yourself. Just speak and keep m
 
 ---
 
+## 📦 Install
+
+### Direct download
+[⬇️ Download VoiceType.dmg](https://github.com/mahdijafaridev/VoiceType/VoiceType.dmg)
+
+Unzip and move `VoiceType.app` to your Applications folder.
+
+### Homebrew
+```bash
+brew tap yourname/voicetype
+brew install --cask voicetype
+```
+
+---
+
 ## 🚀 How to use it
 
 1. Click into any text field — email, browser, notes, Slack, anywhere
@@ -37,12 +52,6 @@ No switching apps. No copy-pasting. No repeating yourself. Just speak and keep m
 
 ## 🔧 First-time setup
 
-### Install
-
-Download and open `VoiceType.app`. It lives in your menu bar — no Dock icon.
-
-### Give it permissions
-
 On first launch VoiceType will ask for three things:
 
 | Permission | Why |
@@ -60,7 +69,7 @@ If you accidentally skipped any of them, go to `System Settings → Privacy & Se
 **Nothing happens when I hold Right Command**
 → Go to `System Settings → Privacy & Security → Accessibility` and make sure VoiceType is toggled on.
 
-**Text is not pasting into the app**
+**Text is not pasting**
 → Accessibility permission is missing. Click the VoiceType menu bar icon → "Request Accessibility Permission".
 
 **Transcription is off**
