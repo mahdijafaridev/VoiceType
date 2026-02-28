@@ -228,20 +228,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let accessibilityPromptedKey = "didPromptAccessibility"
     private let accessibilitySystemPromptedKey = "didPromptAccessibilitySystem"
     private let launchAtLoginConfiguredKey = "didConfigureLaunchAtLoginDefault"
+    private let launchInitializationDelay: TimeInterval = 2.0
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         setupStatusItem()
         configureLaunchAtLoginDefault()
         wireLevelUpdates()
-        requestPermissionsIfNeeded()
-        startGlobalKeyMonitor()
+        startAppServicesAfterLaunchDelay()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
         keyMonitorRecoveryTimer?.invalidate()
         keyMonitorRecoveryTimer = nil
         stopGlobalKeyMonitor()
+    }
+
+    /**
+     Defers startup-sensitive services to avoid interrupting user activity immediately after launch.
+     */
+    private func startAppServicesAfterLaunchDelay() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + launchInitializationDelay) { [weak self] in
+            guard let self else { return }
+            self.requestPermissionsIfNeeded()
+            self.startGlobalKeyMonitor()
+        }
     }
 
     /**
@@ -281,6 +292,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let launchAtLoginItem = NSMenuItem(title: "Launch at Login", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
         launchAtLoginItem.state = isLaunchAtLoginEnabled() ? .on : .off
         menu.addItem(launchAtLoginItem)
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "Quit VoiceType", action: #selector(quitVoiceType), keyEquivalent: "q"))
         self.launchAtLoginItem = launchAtLoginItem
 
         menu.items.forEach { $0.target = self }
@@ -301,7 +314,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         statusItem = nil
-        overlayController.showToast(message: "Menu bar hidden. Relaunch app to restore.")
+    }
+
+    /**
+     Terminates the application from the menu bar.
+     */
+    @objc
+    private func quitVoiceType() {
+        NSApp.terminate(nil)
     }
 
     /**

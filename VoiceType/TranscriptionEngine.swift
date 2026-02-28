@@ -47,6 +47,13 @@ final class TranscriptionEngine {
             )
         }
 
+        resolvePendingStopContinuationIfNeeded(
+            with: NSError(
+                domain: "VoiceType",
+                code: 1003,
+                userInfo: [NSLocalizedDescriptionKey: "Previous recording session was interrupted by a new start request."]
+            )
+        )
         cleanupRecognitionState()
         latestTranscript = ""
         recognitionError = nil
@@ -135,8 +142,16 @@ final class TranscriptionEngine {
         recognitionTask?.cancel()
         recognitionTask = nil
         recognitionRequest = nil
-        stopContinuation = nil
         recognitionError = nil
+    }
+
+    /**
+     Ensures any pending stop continuation is resumed before state reset.
+     */
+    private func resolvePendingStopContinuationIfNeeded(with error: Error) {
+        guard let continuation = stopContinuation else { return }
+        stopContinuation = nil
+        continuation.resume(returning: .failure(error))
     }
 
     /**
